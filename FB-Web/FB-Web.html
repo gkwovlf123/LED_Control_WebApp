@@ -1,0 +1,97 @@
+<html>
+<head>
+  <link rel="stylesheet" href="image/style.css">
+</head>
+  <body>
+      <div class="titlediv">
+        <h2 id="title">LED Control Wep App</h2>
+      </div>
+      <div class="OUT_TEXTdiv">
+        <h1 id="OUT_TEXT"></h1> <!--현재 LED의 ON/OFF 상태 표시-->
+      </div>
+      <br><br>
+      <div class="div1">
+        <div class="onBtndiv">
+          <button class="on-button" id = "onBtn" >LED ON</button> <!--LED ON 버튼, 버튼 클릭 시, Firebase의 LED 값이 ON으로 수정됨-->
+        </div>
+        <div class="offBtndiv">
+          <button class="off-button" id = "offBtn" >LED OFF</button> <!--LED OFF 버튼, 버튼 클릭 시, Firebase의 LED 값이 OFF으로 수정됨-->
+        </div>
+      </div>
+      <br>
+      <br>
+      <div class="lightdiv">
+        <img src="image/1f4a12.png" id="light" class="light"> <!--LED의 상태변화를 시각적으로 확인할 수 있는 사진-->
+      </div>
+      <script type="module"> //Script의 Module 타입을 사용해서 필요한 것만 사용할 수 있게 해줌
+      // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.5.0/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.5.0/firebase-analytics.js";
+        import { getDatabase, ref, set, get, onValue, child} from "https://www.gstatic.com/firebasejs/9.5.0/firebase-database.js";
+        // export { getDatabase, ref, set, get, onValue, child };
+        
+        // TODO: Add SDKs for Firebase products that you want to use
+        // https://firebase.google.com/docs/web/setup#available-libraries
+      
+        // Your web app's Firebase configuration
+        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+        const firebaseConfig = { //현재 나의 Firebase 정보, Firebase 연동 시 필요
+            apiKey: "AIzaSyCo6vWBT8KmFl8LhOP-1mYH6P1qzMmYsDk",
+            authDomain: "fb-webandroid-window.firebaseapp.com",
+            databaseURL: "https://fb-webandroid-window-default-rtdb.firebaseio.com", //현재 내가 사용하는 Realtime DB
+            projectId: "fb-webandroid-window",
+            storageBucket: "fb-webandroid-window.appspot.com",
+            messagingSenderId: "283994736901",
+            appId: "1:283994736901:web:4d7005e2f27cc55583cf6c",
+            measurementId: "G-44N6ZZL7GD"
+        };
+      
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const db = getDatabase(app);
+        console.log(db);
+        
+        var OnButton = document.getElementById("onBtn"); //LED On버튼의 ID값을 가져오고 그것을 Onbutton 변수에 저장
+        OnButton.addEventListener("click", onBtnClick, false); //Onbutton에 clickEventListener를 지정
+        
+        var OffButton = document.getElementById("offBtn"); //LED Off버튼의 ID값을 가져오고 그것을 offbutton 변수에 저장
+        OffButton.addEventListener("click", offBtnClick, false); //Offbutton에 clickEventListener를 지정
+         
+        
+        function onBtnClick(event) { //75번 라인에서 사용하는 이벤트리스너에서 사용하는 함수
+          set(ref(db, 'LED_STATUS'), 'ON'); //Realtime DB의 LED status 값을 On으로 저장
+          console.log("LED ON"); //console 출력
+          document.getElementById("OUT_TEXT").style.color="#ff0000"; //39번 라인의 id 값을 가져와서 그것의 색을 red로 지정
+          document.getElementById("light").src="image/1f4a1.png"; //44번 라인의 id값을 가져와서 해당 사진을 1f4a1.png으로 지정
+          document.getElementById("onBtn").style.backgroundColor="red"; //onbutton의 색을 red로 지정
+          document.getElementById("offBtn").style.backgroundColor="blue" //offbutton의 색을 blue로 지정
+        }
+                                                       
+        function offBtnClick() { //78번 라인에서 사용하는 이벤트리스너에서 사용하는 함수
+          set(ref(db, 'LED_STATUS'), 'OFF'); //Realtime DB의 LED status 값을 Off으로 저장
+          console.log("LED OFF"); //console 출력
+          document.getElementById("OUT_TEXT").style.color="#0000ff"; //39번 라인의 id 값을 가져와서 그것의 색을 blue로 지정
+          document.getElementById("light").src="image/1f4a12.png"; //44번 라인의 id값을 가져와서 해당 사진을 1f4a12.png으로 지정
+          document.getElementById("onBtn").style.backgroundColor="blue"; //onbutton의 색을 blue로 지정
+          document.getElementById("offBtn").style.backgroundColor="red"; //offbutton의 색을 red로 지정
+        }
+        
+        const dbRef = ref(db, 'LED_STATUS'); //Realtime DB의 LED status 값을 dbRef 변수에 저장
+        onValue(dbRef, (snapshot) => { //LED status의 값을 sanpshot에 저장
+            console.log(snapshot.val()); //snapshot의 값을 console에 출력
+            OUT_TEXT.innerText = 'LED is ' + snapshot.val(); //39번 라인의 text를 현재 RealTime DB의 값으로 지정
+            if(snapshot.val()==="ON") { //snapshot 값이 on일 경우
+              document.getElementById("light").src="image/1f4a1.png"; //표시될 사진을 해당 사진으로 지정
+              document.getElementById("OUT_TEXT").style.color="#ff0000"; //Text값 색깔 지정
+            }
+            else { //On이 아닐경우
+              document.getElementById("light").src="image/1f4a12.png"; //표시될 사진을 해당 사진으로 지정
+              document.getElementById("OUT_TEXT").style.color="#0000ff"; //Text값 색깔 지정
+              document.name
+            }
+        })
+        
+      </script>
+    </body>
+</html>
